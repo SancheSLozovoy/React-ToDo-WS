@@ -19,9 +19,33 @@ class TaskList extends React.Component<{}, TaskListState> {
         this.state = {
             tasks : []
         }
-       
+        this.loadTaks = this.loadTaks.bind(this)
     }
 
+
+
+    componentDidMount(){
+        this.loadTaks()
+    }
+
+
+    loadTaks() {
+        fetch('https://jsonplaceholder.typicode.com/todos/')
+        .then(response => response.json())
+        .then(data => this.setState({ tasks: data }));
+    }
+
+    deleteTask(){
+        
+    }
+
+    toggleTask(){
+
+    }
+
+    addTask(){
+        
+    }
     render(){
         return(
             <div className="tasks">
@@ -32,8 +56,17 @@ class TaskList extends React.Component<{}, TaskListState> {
                     <button className="delete-button">Delete completed</button>
                 </div>
                 <ul className="tasks-list">
-
-                </ul>
+                        {this.state.tasks.map(task => (
+                            <Task
+                                key={task.id}
+                                title={task.title}
+                                id={task.id}
+                                completed={task.completed}
+                                onDelete={this.deleteTask}
+                                onToggle={this.toggleTask}
+                            />
+                        ))}
+                    </ul>
             </div>
         )
     }
