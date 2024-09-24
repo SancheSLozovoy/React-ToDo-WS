@@ -2,20 +2,8 @@ import React from 'react';
 import Task from '../Task/Task';
 import './TaskList.css'
 import UserSelect from '../TaskSelectUser/TaskSelectUser';
-import { loadTasks } from '../../service/TaskService';
-
-interface TaskId {
-    id: number;
-    title: string;
-    completed: boolean;
-    userId: number;
-}
-
-interface TaskListState {
-    tasks: TaskId[];
-    filterTasks: TaskId[];
-    selectedUserId: number | null;
-}
+import { TaskService } from '../../service/TaskService';
+import { TaskProps, TaskListState } from '../../types/Task.type';
 
 class TaskList extends React.Component<{}, TaskListState> {
     constructor(props: {}) {
@@ -28,7 +16,7 @@ class TaskList extends React.Component<{}, TaskListState> {
     }
 
     async componentDidMount() {
-        const tasks = await loadTasks();
+        const tasks = await TaskService.loadTasks();
         this.setState({ tasks, filterTasks: tasks });
     }
 
@@ -44,6 +32,50 @@ class TaskList extends React.Component<{}, TaskListState> {
         });
     };
 
+    deleteTask = async (id: number) => {
+        try {
+            await TaskService.deleteTask(id);
+            this.setState(prevState => ({
+                tasks: prevState.tasks.filter(task => task.id !== id),
+                filterTasks: prevState.filterTasks.filter(task => task.id !== id),
+            }));
+        } catch (error) {
+            console.error('Error deleting task:', error);
+        }
+    };
+
+    markAllTasks = () => {
+        this.setState(prevState => {
+            const { tasks, selectedUserId } = prevState;
+    
+            const updatedTasks = tasks.map(task => {
+                if (!selectedUserId || task.userId === selectedUserId) {
+                    return { ...task, completed: true }; 
+                }
+                return task;
+            });
+    
+            const updatedFilterTasks = prevState.filterTasks.map(task => {
+                if (!selectedUserId || task.userId === selectedUserId) {
+                    return { ...task, completed: true };
+                }
+                return task;
+            });
+    
+            return { tasks: updatedTasks, filterTasks: updatedFilterTasks };
+        });
+    };
+
+    deleteMarks = () => {
+        this.setState(prevState => {
+            const {tasks, selectedUserId} = prevState;
+            const remainingTasks = tasks.filter(task => {
+                return !(task.completed && (!selectedUserId || task.userId === selectedUserId));
+            });
+            return ({tasks : remainingTasks, filterTasks : remainingTasks})
+        })
+    }
+
     render() {
         const userIds = Array.from(new Set(this.state.tasks.map(task => task.userId)));
 
@@ -52,8 +84,8 @@ class TaskList extends React.Component<{}, TaskListState> {
                 <h1 className="list-title">Tasks List</h1>
                 <div className="buttons-container">
                     <button className="add-button">Add task</button>
-                    <button className="mark-button">Mark all</button>
-                    <button className="delete-button">Delete completed</button>
+                    <button className="mark-button" onClick={this.markAllTasks}>Mark all</button>
+                    <button className="delete-button" onClick={this.deleteMarks}>Delete completed</button>
                     <UserSelect 
                         userIds={userIds} 
                         selectedUserId={this.state.selectedUserId} 
@@ -68,6 +100,8 @@ class TaskList extends React.Component<{}, TaskListState> {
                             id={task.id}
                             completed={task.completed}
                             userId={task.userId}
+                            onDelete={this.deleteTask}
+                            onToggle={this.toggleTask}
                         />
                     ))}
                 </ul>

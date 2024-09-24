@@ -1,12 +1,6 @@
 import React from 'react';
 import './Task.css'
-
-interface TaskProps{
-    id: number;
-    title : string;
-    completed: boolean;
-    userId  :number;
-}
+import { TaskProps } from '../../types/Task.type';
 
 class Task extends React.Component<TaskProps> {
     constructor(props: TaskProps){
@@ -15,7 +9,7 @@ class Task extends React.Component<TaskProps> {
 
     render(){
 
-        const { title, completed, id } = this.props;
+        const { title, completed, onToggle, onDelete, id} = this.props;
 
         const titleClass = completed ? 'task-title completed' : 'task-title';
 
@@ -23,8 +17,8 @@ class Task extends React.Component<TaskProps> {
             <div className="task-container">
                 <div className="task-content">
                     <span className={titleClass}>{title}</span>
-                    <input type='checkbox' checked={completed}></input>
-                    <button>Delete</button>
+                    <input type='checkbox' checked={completed} onClick={() => onToggle(id)}></input>
+                    <button onClick={() => onDelete(id)}>Delete</button>
                 </div>
             </div>
         )
