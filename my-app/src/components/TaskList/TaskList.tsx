@@ -4,6 +4,7 @@ import './TaskList.css'
 import UserSelect from '../TaskSelectUser/TaskSelectUser';
 import { TaskService } from '../../service/TaskService';
 import { TaskListState } from '../../types/Task.type';
+import { error } from 'console';
 
 class TaskList extends React.Component<{}, TaskListState> {
     constructor(props: {}) {
@@ -112,7 +113,50 @@ class TaskList extends React.Component<{}, TaskListState> {
         });
     };
     
+    addTask = async (title: string) => {
+        if (!title.trim()) {
+            return; 
+        }
     
+        const maxId = this.state.tasks.length > 0
+            ? Math.max(...this.state.tasks.map(task => task.id))
+            : 0;
+        
+        const newTaskId = maxId + 1;
+    
+        try {
+            const newTask = {
+                id: newTaskId,
+                title,
+                completed: false,
+                userId: this.state.selectedUserId || 1, 
+                onToggle: this.toggleTask, 
+                onDelete: this.deleteTask 
+            };
+            
+            //ubrat` posle prowerki
+            console.log(newTask.id)
+            console.log(newTask.userId)
+
+            await TaskService.addTask(newTask.title, newTask.userId);
+    
+            this.setState(prevState => ({
+                tasks: [...prevState.tasks, newTask],
+                filterTasks: [...prevState.filterTasks, newTask]
+            }));
+        } catch (error) {
+            console.error("Error adding task", error);
+        }
+    }
+    
+
+    handleAddTask = () => {
+        const title = prompt("Enter a title");
+        if(title){
+            this.addTask(title)
+        }
+    }
+
     render() {
         const userIds = Array.from(new Set(this.state.tasks.map(task => task.userId)));
 
@@ -120,7 +164,7 @@ class TaskList extends React.Component<{}, TaskListState> {
             <div className="tasks">
                 <h1 className="list-title">Tasks List</h1>
                 <div className="buttons-container">
-                    <button className="add-button">Add task</button>
+                    <button className="add-button" onClick={this.handleAddTask}>Add task</button>
                     <button className="mark-button" onClick={this.markAllTasks}>Mark all</button>
                     <button className="delete-button" onClick={this.deleteMarks}>Delete completed</button>
                     <UserSelect 

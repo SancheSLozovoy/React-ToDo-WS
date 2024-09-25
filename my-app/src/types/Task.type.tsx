@@ -15,6 +15,7 @@ interface TaskListState {
     tasks: TaskProps[];
     filterTasks: TaskProps[];
     selectedUserId: number | null;
+    
 }
 
 export type {TaskProps, TaskListState, TaskState}
