@@ -3,7 +3,7 @@ import Task from '../Task/Task';
 import './TaskList.css'
 import UserSelect from '../TaskSelectUser/TaskSelectUser';
 import { TaskService } from '../../service/TaskService';
-import { TaskProps, TaskListState } from '../../types/Task.type';
+import { TaskListState } from '../../types/Task.type';
 
 class TaskList extends React.Component<{}, TaskListState> {
     constructor(props: {}) {
@@ -66,16 +66,34 @@ class TaskList extends React.Component<{}, TaskListState> {
         });
     };
 
-    deleteMarks = () => {
-        this.setState(prevState => {
-            const {tasks, selectedUserId} = prevState;
-            const remainingTasks = tasks.filter(task => {
-                return !(task.completed && (!selectedUserId || task.userId === selectedUserId));
+    deleteMarks = async () => {
+        const { tasks, selectedUserId } = this.state;
+        
+        const tasksToDelete = tasks.filter(task => task.completed && (!selectedUserId || task.userId === selectedUserId));
+    
+        try {
+            await Promise.all(tasksToDelete.map(task => TaskService.deleteTask(task.id)));
+    
+            this.setState(prevState => {
+                const remainingTasks = prevState.tasks.filter(task => 
+                    !(task.completed && (!selectedUserId || task.userId === selectedUserId))
+                );
+                return {
+                    tasks: remainingTasks,
+                    filterTasks: selectedUserId ? remainingTasks.filter(task => task.userId === selectedUserId) : remainingTasks,
+                };
             });
-            return ({tasks : remainingTasks, filterTasks : remainingTasks})
-        })
-    }
+        } catch (error) {
+            console.error('Error deleting tasks:', error);
+        }
+    };
+    
+    
 
+    toggleTask = () => {
+
+    }
+    
     render() {
         const userIds = Array.from(new Set(this.state.tasks.map(task => task.userId)));
 

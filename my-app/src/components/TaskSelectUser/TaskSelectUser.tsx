@@ -8,7 +8,7 @@ interface UserSelectProps {
 
 class UserSelect extends React.Component<UserSelectProps> {
     render() {
-        const {userIds, selectedUserId, onUserChange} = this.props;
+        const {userIds, onUserChange} = this.props;
 
         return(
             <select onChange={(e) => onUserChange(+(e.target.value))}>
