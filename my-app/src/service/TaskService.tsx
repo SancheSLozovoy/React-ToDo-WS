@@ -40,10 +40,31 @@ export class TaskService{
         });
 
         if (!response.ok) {
-            throw new Error('Не удалось добавить задачу');
+            throw new Error('Failed to add task');
         }
 
         return response.json(); 
     };
+
+    static updateTask = async(id:number, title: string, completed: boolean, userId:number) =>{
+        const response = await fetch(`${BASE_URL}/${id}`, {
+            method: "PUT",
+            body: JSON.stringify({
+                id,
+                title,
+                completed,
+                userId,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        });
+
+        if(!response.ok){
+            throw new Error("Failed to update task");
+        }
+
+        return response.json();
+    }
 }
 

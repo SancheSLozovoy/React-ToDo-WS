@@ -7,6 +7,13 @@ class Task extends React.Component<TaskProps> {
         super(props);
     }
 
+    handleEdit = () => {
+        const newTitle = prompt("edit task title", this.props.title);
+        if(newTitle && newTitle.trim() !== ""){
+            this.props.onEdit(this.props.id, newTitle.trim())
+        }
+    }
+
     render(){
 
         const { title, completed, onToggle, onDelete, id} = this.props;
@@ -17,8 +24,11 @@ class Task extends React.Component<TaskProps> {
             <div className="task-container">
                 <div className="task-content">
                     <span className={titleClass}>{title}</span>
-                    <input type="checkbox" checked={completed} onChange={() => onToggle(id)}></input>
-                    <button onClick={() => onDelete(id)}>Delete</button>
+                    <div className="button-container">
+                        <input type="checkbox" checked={completed} onChange={() => onToggle(id)}></input>
+                        <button onClick={() => onDelete(id)}>Delete</button>
+                        <button className='change-button' onClick={this.handleEdit}>Change</button>
+                    </div>
                 </div>
             </div>
         )

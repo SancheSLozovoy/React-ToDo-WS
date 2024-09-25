@@ -59,3 +59,20 @@ button:focus {
     outline: none;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
+
+.change-button{
+    background-color: #727272;
+}
+
+.change-button:hover{
+    background-color: #333;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+}
+
+.button-container > *{ 
+    margin-right: 10px;
+}

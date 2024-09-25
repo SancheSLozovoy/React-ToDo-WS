@@ -4,7 +4,6 @@ import './TaskList.css'
 import UserSelect from '../TaskSelectUser/TaskSelectUser';
 import { TaskService } from '../../service/TaskService';
 import { TaskListState } from '../../types/Task.type';
-import { error } from 'console';
 
 class TaskList extends React.Component<{}, TaskListState> {
     constructor(props: {}) {
@@ -131,7 +130,8 @@ class TaskList extends React.Component<{}, TaskListState> {
                 completed: false,
                 userId: this.state.selectedUserId || 1, 
                 onToggle: this.toggleTask, 
-                onDelete: this.deleteTask 
+                onDelete: this.deleteTask, 
+                onEdit: this.updateTask,
             };
             
             //ubrat` posle prowerki
@@ -154,6 +154,25 @@ class TaskList extends React.Component<{}, TaskListState> {
         const title = prompt("Enter a title");
         if(title){
             this.addTask(title)
+        }
+    }
+
+    updateTask = async(id:number, title: string) => {
+        const {tasks, selectedUserId} = this.state;
+        const taskToUpdate = tasks.find(task => task.id === id);
+
+        if(!taskToUpdate){
+            return;
+        }
+
+        try{
+            const updatedTasks = await TaskService.updateTask(id, title, taskToUpdate.completed, taskToUpdate.userId);
+            this.setState(prevState => ({
+                tasks: prevState.tasks.map(tasks => tasks.id === id ? updatedTasks : tasks),
+                filterTasks: prevState.filterTasks.map(task => task.id === id ? updatedTasks : task),
+            }));
+        }catch(error){
+            console.error("Error update", error)
         }
     }
 
@@ -183,6 +202,7 @@ class TaskList extends React.Component<{}, TaskListState> {
                             userId={task.userId}
                             onDelete={this.deleteTask}
                             onToggle={this.toggleTask}
+                            onEdit={this.updateTask}
                         />
                     ))}
                 </ul>

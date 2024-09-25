@@ -5,6 +5,7 @@ interface TaskProps{
     userId  :number;
     onToggle: (id: number) => void;
     onDelete: (id: number) =>void;
+    onEdit: (id: number, title: string) => void;
 }
 
 interface TaskState{
