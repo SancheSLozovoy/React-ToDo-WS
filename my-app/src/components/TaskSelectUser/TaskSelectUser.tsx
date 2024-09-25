@@ -12,6 +12,7 @@ class UserSelect extends React.Component<UserSelectProps> {
 
         return(
             <select onChange={(e) => onUserChange(+(e.target.value))}>
+                <option value={undefined}></option>
                 <option value="">All users</option>
                 {userIds.map(id => (
                     <option key={id} value={id}>

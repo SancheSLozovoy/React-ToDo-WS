@@ -17,7 +17,7 @@ class Task extends React.Component<TaskProps> {
             <div className="task-container">
                 <div className="task-content">
                     <span className={titleClass}>{title}</span>
-                    <input type='checkbox' checked={completed} onClick={() => onToggle(id)}></input>
+                    <input type="checkbox" checked={completed} onChange={() => onToggle(id)}></input>
                     <button onClick={() => onDelete(id)}>Delete</button>
                 </div>
             </div>

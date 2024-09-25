@@ -90,9 +90,28 @@ class TaskList extends React.Component<{}, TaskListState> {
     
     
 
-    toggleTask = () => {
-
-    }
+    toggleTask = (id: number) => {
+        this.setState(prevState => {
+            const { tasks, filterTasks } = prevState;
+    
+            const updatedTasks = tasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed }; 
+                }
+                return task; 
+            });
+    
+            const updatedFilterTasks = filterTasks.map(task => {
+                if (task.id === id) {
+                    return { ...task, completed: !task.completed };
+                }
+                return task; 
+            });
+    
+            return { tasks: updatedTasks, filterTasks: updatedFilterTasks };
+        });
+    };
+    
     
     render() {
         const userIds = Array.from(new Set(this.state.tasks.map(task => task.userId)));
