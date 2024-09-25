@@ -3,9 +3,6 @@ import './Task.css'
 import { TaskProps } from '../../types/Task.type';
 
 class Task extends React.Component<TaskProps> {
-    constructor(props: TaskProps){
-        super(props);
-    }
 
     handleEdit = () => {
         const newTitle = prompt("edit task title", this.props.title);

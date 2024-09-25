@@ -1,10 +1,5 @@
 import React from 'react';
-
-interface UserSelectProps {
-    userIds: number[];
-    selectedUserId: number | null;
-    onUserChange: (userId: number) => void;
-}
+import { UserSelectProps } from '../../types/Task.type';
 
 class UserSelect extends React.Component<UserSelectProps> {
     render() {

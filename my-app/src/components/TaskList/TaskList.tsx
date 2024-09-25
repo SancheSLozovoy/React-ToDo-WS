@@ -158,7 +158,7 @@ class TaskList extends React.Component<{}, TaskListState> {
     }
 
     updateTask = async(id:number, title: string) => {
-        const {tasks, selectedUserId} = this.state;
+        const {tasks} = this.state;
         const taskToUpdate = tasks.find(task => task.id === id);
 
         if(!taskToUpdate){
